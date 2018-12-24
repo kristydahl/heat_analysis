@@ -31,4 +31,22 @@ def historical_days_analysis(model, hi_thresholds):
         #     print 'Trouble in River City!'
 
 
-historical_days_analysis('bcc-csm1-1',['105'])
+#historical_days_analysis('bcc-csm1-1',['105'])
+
+# not sure this is necessary
+def calculate_model_average(models, year_range, month_or_season,hi_thresholds):
+    path_to_hi_data_files = 'Users/kristinadahl/Desktip/heat_data/XXX/'
+    if year_range == 'historical':
+        start_year = 'XXX'
+        end_year = 'XXX'
+    elif year_range == 'mid_century':
+        start_year = 'XXX'
+        end_year = 'XXX'
+    elif year_range == 'late_century':
+        start_year = 'XXX'
+        end_year = 'XXX'
+
+    for model in models:
+        for hi_threshold in hi_thresholds:
+            for year in years: # this will change depending on how hi files are structured (individual years vs.
+                files_to_average = path_to_hi_data_files + 'use string substition for model and year range to get files'
