@@ -6,7 +6,7 @@ function days_above_threshold(){
 	echo 'starting nco calculations'
 	
 	echo $1
-	# create binary flag variable and populate where appropriate
+	# create binary flag variable and populate where appropriate; will need to alter slightly to get sum of FH days, as they will be flagged with multiple values 1-4 (I think)
 	ncap2 -s "flag_$1=(hi>$1)" -O $2 $3
 	echo 'created file with flags'
 	
@@ -18,7 +18,9 @@ function days_above_threshold(){
 	ncks -v total_days_above_$1 -O $3 $4
 	echo 'copied total days to new file'
 	
-	# here's where the model average bit could go
+	# this should probably get pulled out into its own function
+	$number_of_years=int(end_year)-int(start_year)+1
+	ncap2 -s "average_days_above_$1=total_days_above_$1/$number_of_years"
 }
 
 days_above_threshold "$1" "$2" "$3" "$4"
