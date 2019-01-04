@@ -3,6 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="221526de-4954-4ea9-aa11-9f8251b5b0c4" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/days_analysis.py" afterPath="$PROJECT_DIR$/.idea/days_analysis.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/calculate_model_average.sh" afterPath="$PROJECT_DIR$/calculate_model_average.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nco_days_above_threshold.sh" afterPath="$PROJECT_DIR$/nco_days_above_threshold.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nco_no_analog_days.sh" afterPath="$PROJECT_DIR$/nco_no_analog_days.sh" />
     </list>
     <ignored path="heat2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,8 +28,8 @@
       <file leaf-file-name="days_analysis.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.idea/days_analysis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1965">
-              <caret line="131" column="126" selection-start-line="131" selection-start-column="126" selection-end-line="131" selection-end-column="126" />
+            <state relative-caret-position="533">
+              <caret line="206" column="1" selection-start-line="206" selection-start-column="1" selection-end-line="206" selection-end-column="1" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -54,9 +57,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="857" />
-    <option name="y" value="161" />
-    <option name="width" value="1646" />
+    <option name="x" value="501" />
+    <option name="y" value="129" />
+    <option name="width" value="1940" />
     <option name="height" value="1152" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -276,7 +279,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="857" y="161" width="1646" height="1152" extended-state="0" />
+    <frame x="501" y="129" width="1940" height="1152" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -340,8 +343,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.idea/days_analysis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1965">
-          <caret line="131" column="126" selection-start-line="131" selection-start-column="126" selection-end-line="131" selection-end-column="126" />
+        <state relative-caret-position="533">
+          <caret line="206" column="1" selection-start-line="206" selection-start-column="1" selection-end-line="206" selection-end-column="1" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

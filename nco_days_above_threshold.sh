@@ -17,10 +17,6 @@ function days_above_threshold(){
 	# write total days above threshold to new file
 	ncks -v total_days_above_$1 -O $3 $4
 	echo 'copied total days to new file'
-	
-	# this should probably get pulled out into its own function
-	$number_of_years=int(end_year)-int(start_year)+1
-	ncap2 -s "average_days_above_$1=total_days_above_$1/$number_of_years"
 }
 
 days_above_threshold "$1" "$2" "$3" "$4"
