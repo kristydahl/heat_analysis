@@ -7,15 +7,23 @@ function days_above_threshold(){
 	
 	echo $1
 	# create binary flag variable and populate where appropriate; will need to alter slightly to get sum of FH days, as they will be flagged with multiple values 1-4 (I think)
-	ncap2 -s "flag_$1=(hi>$1)" -O $2 $3
+	ncap2 -s "flag_above_$1=(hi>$1)||(hi>=2&&hi<=4)" -O $2 $3
+	ncatted -a description,flag_above_$1,o,c,'Maximum daily heat index falls above specified threshold' $3
+	ncatted -a standard_name,flag_above_$1,o,c,'Day above heat threshold' $3
+	ncatted -a long_name,flag_above_$1,o,c,'Day above heat index threshold' $3
+	ncatted -a units,flag_above_$1,o,c,'days' $3
 	echo 'created file with flags'
 	
 	# calculate total days above threshold
-	ncap2 -s "total_days_above_$1=flag_$1.total(\$time)" -O $3 $3 
+	ncap2 -s "total_above_$1_days=flag_above_$1.total(\$time)" -O $3 $3 
+	ncatted -a description,total_above_$1_days,o,c,'Total days above specified heat index threshold' $3
+	ncatted -a standard_name,total_above_$1_days,o,c,'Days above threshold' $3
+	ncatted -a long_name,total_above_$1_days,o,c,'Days above threshold' $3
+	ncatted -a units,total_above_$1_days,o,c,'days' $3
 	echo 'calculated total days'
 	
 	# write total days above threshold to new file
-	ncks -v total_days_above_$1 -O $3 $4
+	ncks -v total_above_$1_days -O $3 $4
 	echo 'copied total days to new file'
 }
 

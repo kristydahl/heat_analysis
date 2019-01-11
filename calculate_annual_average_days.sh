@@ -2,7 +2,8 @@
 
 function annual_average_days(){
 	# calculate annual average days above threshold for each time chunk
-	ncap2 -s "annual_average_$1_days=(total_$1_days)/$2" -O $3 $4
+	ncap2 -s "annual_average_$1_days=(total_$1_days)/$2" -O $3 $4 # use this for no_analog
+	#ncap2 -s "annual_average_$1_days=(total_days_$1)/$2" -O $3 $4 # tested/old use this for above_100 and above_105
 	ncatted -a description,annual_average_$1_days,o,c,'Annual average number of days at or above threshold' $4
 	ncatted -a standard_name,annual_average_$1_days,o,c,'Annual average days at or above threshold' $4
 	ncatted -a long_name,annual_average_$1_days,o,c,'Annual average number of days at or above threshold' $4
