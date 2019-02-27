@@ -8,6 +8,7 @@ import shutil
 from bs4 import BeautifulSoup
 import shlex
 import sys
+import requests
 
 # Download data from the Northwest Knowledge Network
 def download_files_from_nkn(models):
@@ -43,6 +44,28 @@ def download_files_from_nkn(models):
                 unzipped_file.write(s)
                 unzipped_file.close()
         print 'Downloaded and unzipped files for ' + model
+        print(datetime.datetime.now().time())
+
+def download_tasmax_data_from_nkn(models):
+    with open('/Volumes/hot_drive/temperature_data/macav2metdata_urls.txt') as f:
+        content = f.readlines()
+        content = [x.strip() for x in content]
+    for model in models:
+        for url in content:
+            if model + '_' in url:
+                print 'Downloading ' + url
+                file_name = os.path.basename(url)
+                print 'Save to: ' + file_name
+                r = requests.get(url)
+                with open('/Volumes/hot_drive/temperature_data/{0}/' .format(model) + file_name, 'wb') as f:
+                    f.write(r.content)
+
+
+                # file_name = os.path.basename(url)
+                # print file_name
+                # file_to_download = urllib2.urlopen(url)
+                # file_to_write = file_to_download.read()
+
         print(datetime.datetime.now().time())
 
 # This method hyperslabs specific files in order to have the right years available for creating 30-year means
@@ -136,8 +159,8 @@ def days_above_threshold_analysis(models,scenarios,time_periods, thresholds):
             for time_period in time_periods:
                 print time_period
                 if time_period == 'historical':
-                    start_year = '1971'
-                    end_year = '2000'
+                    start_year = '1976'
+                    end_year = '2005'
                 if time_period == 'historical_full_modeled':
                     start_year = '1950'
                     end_year = '2005'
@@ -147,6 +170,9 @@ def days_above_threshold_analysis(models,scenarios,time_periods, thresholds):
                 if time_period == 'late_century':
                     start_year = '2070'
                     end_year = '2099'
+                if time_period == 'paris2c':
+                    start_year = '2046'
+                    end_year = '2065'
 
                 files_to_analyze = glob.glob1(path_to_hi_data_files, 'macav2metdata_{0}_r1i1p1_{1}_hi_*.nc' .format(model, scenario))
                 print 'Full file list to analyze: '
@@ -158,40 +184,38 @@ def days_above_threshold_analysis(models,scenarios,time_periods, thresholds):
                     if int(file_start_year) >= int(start_year):
                         if int(file_start_year) < int(end_year)+30:
                             if int(file_end_year) <= int(end_year):
-                                if time_period == 'historical_full_modeled':
-                                    #following two lines are for when analyzing the historical_full_modeled period
-                                    if file_start_year != '1971':
-                                        if file_end_year != '2000':
-                                            print 'Analyzing ' + file
-                                            infile = path_to_hi_data_files + file
-                                            print 'infile is: ' + infile
-
-                                            for threshold in thresholds:
-                                                print 'Doing calculations for threshold of ' + threshold
-                                                if threshold == 'no_analog':
-                                                    outfile_with_flag = path_to_days_results_files + 'no_analog_flag_' + file
-                                                    print 'outfile_with_flag is: ' + outfile_with_flag
-                                                    print(datetime.datetime.now().time())
-                                                    print 'starting process for no_analog days'
-                                                    outfile_number_of_days = path_to_days_results_files + 'total_no_analog_days_' + file
-                                                    print outfile_number_of_days
-                                                    # call nco_no_analog_days.sh and pass in parameters in list
-                                                    subprocess.Popen(["bash","/Users/kristinadahl/PycharmProjects/heat2/nco_no_analog_days.sh", infile, outfile_with_flag, outfile_number_of_days]).wait()
-                                                    print(datetime.datetime.now().time())
-                                                else:
-                                                    outfile_with_flag = path_to_days_results_files + 'above_{0}_flag_' .format(threshold) + file
-                                                    outfile_number_of_days = path_to_days_results_files + 'total_above_{0}_days_'.format(
-                                                        threshold) + file
-                                                    print 'outfile_with_flag is: ' + outfile_with_flag
-                                                    print 'starting process for threshold analysis'
-                                                    print(datetime.datetime.now().time())
-                                                    # call nco_days_above_threshold.sh and pass in parameters in list
-                                                    subprocess.Popen(
-                                                        ["bash", "/Users/kristinadahl/PycharmProjects/heat2/nco_days_above_threshold.sh",
-                                                         str(threshold), infile, outfile_with_flag, outfile_number_of_days]).wait()
-                                                    print(datetime.datetime.now().time())
-                                else:
-                                    print 'Hey! You need to update your code! Comment out lines 130 and 131.'
+                                # if time_period == 'historical':
+                                #     #following two lines are for when analyzing the historical_full_modeled period
+                                #     if file_end_year != '2000':
+                                print 'Analyzing ' + file
+                                infile = path_to_hi_data_files + file
+                                print 'infile is: ' + infile
+                                for threshold in thresholds:
+                                    print 'Doing calculations for threshold of ' + threshold
+                                    if threshold == 'no_analog':
+                                        outfile_with_flag = path_to_days_results_files + 'no_analog_flag_' + file
+                                        print 'outfile_with_flag is: ' + outfile_with_flag
+                                        print(datetime.datetime.now().time())
+                                        print 'starting process for no_analog days'
+                                        outfile_number_of_days = path_to_days_results_files + 'total_no_analog_days_' + file
+                                        print outfile_number_of_days
+                                        # call nco_no_analog_days.sh and pass in parameters in list
+                                        subprocess.Popen(["bash","/Users/kristinadahl/PycharmProjects/heat2/nco_no_analog_days.sh", infile, outfile_with_flag, outfile_number_of_days]).wait()
+                                        print(datetime.datetime.now().time())
+                                    else:
+                                        outfile_with_flag = path_to_days_results_files + 'above_{0}_flag_' .format(threshold) + file
+                                        outfile_number_of_days = path_to_days_results_files + 'total_above_{0}_days_'.format(
+                                            threshold) + file
+                                        print 'outfile_with_flag is: ' + outfile_with_flag
+                                        print 'starting process for threshold analysis'
+                                        print(datetime.datetime.now().time())
+                                        # call nco_days_above_threshold.sh and pass in parameters in list
+                                        subprocess.Popen(
+                                            ["bash", "/Users/kristinadahl/PycharmProjects/heat2/nco_days_above_threshold.sh",
+                                             str(threshold), infile, outfile_with_flag, outfile_number_of_days]).wait()
+                                        print(datetime.datetime.now().time())
+                            # else:
+                            #     print 'Hey! You need to update your code! Comment out lines 130 and 131.'
 
 # threshold options are 'no_analog','above_100', or 'above_105'
 def calculate_annual_average_days_for_obs(thresholds):
@@ -248,9 +272,12 @@ def calculate_annual_average_days(models, scenarios, time_periods, thresholds):
                 if time_period == 'late_century':
                     start_year = '2070'
                     end_year = '2099'
-                if time_period == 'historical_full_modeled':
-                    start_year = '1950'
+                if time_period == 'historical2':
+                    start_year = '1976'
                     end_year = '2005'
+                if time_period == 'paris2c':
+                    start_year = '2046'
+                    end_year = '2065'
                 for threshold in thresholds:
                     files_to_analyze = glob.glob1(path_to_days_results_files,
                                                   'total_{0}_days_macav2metdata_{1}_r1i1p1_{2}_hi_*.nc'.format(threshold, model, scenario)) # need to edit because of the above_100 threshold construct
@@ -265,23 +292,18 @@ def calculate_annual_average_days(models, scenarios, time_periods, thresholds):
                         if int(file_start_year) >= int(start_year):
                             if int(file_start_year) < int(end_year) + 30:
                                 if int(file_start_year) < int(end_year):
-                                    if time_period == 'historical_full_modeled':
-                                        # following two lines are for when analyzing the historical_full_modeled period
-                                        if file_start_year != '1971':
-                                            if file_end_year != '2000':
-                                                print 'Analyzing this file: ' + file
-                                                infile = path_to_days_results_files + file
-                                                annual_average_outfile = path_to_days_results_files + 'annual_average_{0}_days_macav2metdata_{1}_r1i1p1_{2}_hi_{3}_{4}.nc' .format(threshold, model, scenario, file_start_year, file_end_year)
-                                                time_period_average_outfile = path_to_days_results_files + '{0}_average_{1}_days_macav2metdata_{2}_r1i1p1_{3}_hi_{4}_{5}.nc' .format(time_period, threshold, model, scenario, start_year, end_year)
-                                                # get number of years over which to average from file start and end years
-                                                number_of_years = int(file_end_year) - int(file_start_year) + 1
-                                                number_of_years = str(number_of_years)
-                                                # call calculate_annual_average_days.sh and pass in parameters in list
-                                                subprocess.Popen(["bash","/Users/kristinadahl/PycharmProjects/heat2/calculate_annual_average_days.sh", threshold, number_of_years, infile, annual_average_outfile, time_period_average_outfile]).wait()
-                                                print 'Calculated annual average number of days at or above {0} and updated attributes' .format(threshold)
-                                                ncea_arguments.append(annual_average_outfile)
-                                    else:
-                                        print 'Hey! Check your code because this is just for historical_full_modeled!'
+                                    print 'Analyzing this file: ' + file
+                                    infile = path_to_days_results_files + file
+                                    #edit out the testing path change when not testing
+                                    annual_average_outfile = path_to_days_results_files + 'annual_average_{0}_days_macav2metdata_{1}_r1i1p1_{2}_hi_{3}_{4}.nc' .format(threshold, model, scenario, file_start_year, file_end_year)
+                                    time_period_average_outfile = path_to_days_results_files + '{0}_average_{1}_days_macav2metdata_{2}_r1i1p1_{3}_hi_{4}_{5}.nc' .format(time_period, threshold, model, scenario, start_year, end_year)
+                                    # get number of years over which to average from file start and end years
+                                    number_of_years = int(file_end_year) - int(file_start_year) + 1
+                                    number_of_years = str(number_of_years)
+                                    # call calculate_annual_average_days.sh and pass in parameters in list
+                                    subprocess.Popen(["bash","/Users/kristinadahl/PycharmProjects/heat2/calculate_annual_average_days.sh", threshold, number_of_years, infile, annual_average_outfile, time_period_average_outfile]).wait()
+                                    print 'Calculated annual average number of days at or above {0} and updated attributes' .format(threshold)
+                                    ncea_arguments.append(annual_average_outfile)
                     ncea_arguments.append('-O')
                     ncea_arguments.append(time_period_average_outfile)
                     print ncea_arguments
@@ -306,6 +328,9 @@ def calculate_ensemble_mean(models, scenarios, time_periods, thresholds):
             if time_period == 'historical_full_modeled':
                 start_year = '1950'
                 end_year = '2005'
+            if time_period == 'paris2c':
+                start_year = '2046'
+                end_year = '2065'
             for threshold in thresholds:
                 print 'Calculating ensemble mean for {0}, {1}, {2}' .format(scenario, time_period, threshold)
                 ncea_arguments = ['ncea']
@@ -360,21 +385,45 @@ def compress_data(models, size_threshold):
                 print 'Compressed ' + file
         print(datetime.datetime.now().time())
 
-
+def calculate_individual_models_vs_ensemble_mean(models, scenarios, time_periods, thresholds):
+    path_to_ensemble_results = '/Volumes/hot_drive/heat_data/ensemble_means/'
+    for model in models:
+        for scenario in scenarios:
+            for time_period in time_periods:
+                if time_period == 'historical':
+                    start_year = '1971'
+                    end_year = '2000'
+                if time_period == 'mid_century':
+                    start_year = '2036'
+                    end_year = '2065'
+                if time_period == 'late_century':
+                    start_year = '2070'
+                    end_year = '2099'
+                for threshold in thresholds:
+                    path_to_individual_model_results = '/Volumes/hot_drive/heat_data/{0}/days_results/' .format(model)
+                    model_average_days = path_to_individual_model_results + '{0}_average_{1}_days_macav2metdata_{2}_r1i1p1_{3}_hi_{4}_{5}.nc' .format(time_period, threshold, model, scenario, start_year, end_year)
+                    print model_average_days
+                    ensemble_average_days = path_to_ensemble_results + '{0}_ensemble_mean_average_{1}_hi_days_{2}_{3}_{4}.nc' .format(time_period, threshold, scenario, start_year, end_year)
+                    print ensemble_average_days
+                    output_file = '/Volumes/hot_drive/heat_data/models_minus_ensemble_means/{0}_{1}/{2}_minus_ensemble_mean_{0}_annual_average_{3}_hi_days_{4}_{5}.nc' .format(scenario, time_period, model, threshold, start_year, end_year)
+                    subprocess.call(['ncdiff',model_average_days, ensemble_average_days, output_file])
+                    print 'Created ' + output_file
 
 # below are commands for running the above methods
 full_models_list = ['bcc-csm1-1','bcc-csm1-1-m','BNU-ESM','CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','GFDL-ESM2M','GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4','IPSL-CM5A-LR','IPSL-CM5A-MR','IPSL-CM5B-LR','MIROC5','MIROC-ESM','MIROC-ESM-CHEM','MRI-CGCM3']
 
 #models_list = ['bcc-csm1-1-m','BNU-ESM','CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','GFDL-ESM2M','GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4']
-models_list = ['bcc-csm1-1-m','BNU-ESM','CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','GFDL-ESM2M','GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4','IPSL-CM5A-LR','IPSL-CM5A-MR','IPSL-CM5B-LR','MIROC5','MIROC-ESM','MIROC-ESM-CHEM','MRI-CGCM3']
+models_list = ['GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4','IPSL-CM5A-LR','IPSL-CM5A-MR','IPSL-CM5B-LR','MIROC5','MIROC-ESM','MIROC-ESM-CHEM','MRI-CGCM3']
 
 #download_files_from_nkn(models_list)
 #hyperslab_files_to_get_desired_time_blocks(full_models_list,['historical','rcp45','rcp85'],['historical','late_century'])
-#days_above_threshold_analysis(full_models_list,['historical'],['historical'],['no_analog'])
-#calculate_annual_average_days(full_models_list,['historical'],['historical_full_modeled'],['no_analog','above_100','above_105'])
+#days_above_threshold_analysis(full_models_list,['rcp45'],['paris2c'],['100','105','no_analog'])
+#calculate_annual_average_days(full_models_list,['rcp45'],['paris2c'],['no_analog','above_100','above_105'])
 #days_above_threshold_analysis_for_obs(['no_analog','100','105'])
-calculate_ensemble_mean(full_models_list, ['historical'],['historical_full_modeled'],['no_analog','above_100','above_105'])
+calculate_ensemble_mean(full_models_list, ['rcp45'],['paris2c'],['no_analog','above_100','above_105'])
 #days_above_threshold_analysis(models_list_2,['historical'],['historical'],['100','105'])
 #calculate_days_anomalies(['rcp45','rcp85'],['mid_century','late_century'],['above_100','above_105'])
-#compress_data(models_list, 1000000000)
+#compress_data(full_models_list, 1000000000)
 #calculate_annual_average_days_for_obs(['no_analog','above_100','above_105'])
+#download_tasmax_data_from_nkn(models_list)
+#calculate_individual_models_vs_ensemble_mean(full_models_list,['historical'],['historical'],['above_100','above_105','no_analog'])
