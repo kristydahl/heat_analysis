@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="221526de-4954-4ea9-aa11-9f8251b5b0c4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/days_analysis.py" afterPath="$PROJECT_DIR$/.idea/days_analysis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ensemble_mean_testing.py" afterPath="$PROJECT_DIR$/.idea/ensemble_mean_testing.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/create_one_year_chunks.sh" afterPath="$PROJECT_DIR$/create_one_year_chunks.sh" />
     </list>
     <ignored path="heat2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -335,7 +332,14 @@
       <option name="project" value="LOCAL" />
       <updated>1545623297820</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Updates for paris2c time period.">
+      <created>1551287303641</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1551287303641</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -374,7 +378,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Creating repo, adding days_analysis.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Creating repo, adding days_analysis.py" />
+    <MESSAGE value="Updates for paris2c time period." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updates for paris2c time period." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
