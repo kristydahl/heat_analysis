@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import shlex
 import sys
 import requests
+import boto3
 
 # Download data from the Northwest Knowledge Network
 def download_files_from_nkn(models):
@@ -159,8 +160,8 @@ def days_above_threshold_analysis(models,scenarios,time_periods, thresholds):
             for time_period in time_periods:
                 print time_period
                 if time_period == 'historical':
-                    start_year = '1976'
-                    end_year = '2005'
+                    start_year = '1971'
+                    end_year = '2000'
                 if time_period == 'historical_full_modeled':
                     start_year = '1950'
                     end_year = '2005'
@@ -280,7 +281,7 @@ def calculate_annual_average_days(models, scenarios, time_periods, thresholds):
                     end_year = '2065'
                 for threshold in thresholds:
                     files_to_analyze = glob.glob1(path_to_days_results_files,
-                                                  'total_{0}_days_macav2metdata_{1}_r1i1p1_{2}_hi_*.nc'.format(threshold, model, scenario)) # need to edit because of the above_100 threshold construct
+                                                  'total_{0}_days_macav2metdata_{1}_r1i1p1_{2}_hi_*.nc'.format(threshold, model, scenario))
                     print 'Analyzing these conditions: {0} {1} {2} {3}' .format(model, scenario, time_period, threshold)
                     print 'Full file list to analyze: '
                     print files_to_analyze
@@ -409,21 +410,39 @@ def calculate_individual_models_vs_ensemble_mean(models, scenarios, time_periods
                     subprocess.call(['ncdiff',model_average_days, ensemble_average_days, output_file])
                     print 'Created ' + output_file
 
+# not working quite right
+def backup_to_aws_s3(models):
+    s3 = boto3.resource('s3')
+    path_to_data = '/Volumes/hot_drive/heat_data/'
+    for model in models:
+        bucket = s3.Bucket('ucs-heat-data-backup/{0}'.format(model))
+        subprocess.call(['aws','s3','cp',path_to_data + '{0}/' .format(model),'s3://ucs-heat-data-backup/{0} --recursive' .format(model)])
+        print 'Copied {0} to s3' .format(model)
+
 # below are commands for running the above methods
 full_models_list = ['bcc-csm1-1','bcc-csm1-1-m','BNU-ESM','CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','GFDL-ESM2M','GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4','IPSL-CM5A-LR','IPSL-CM5A-MR','IPSL-CM5B-LR','MIROC5','MIROC-ESM','MIROC-ESM-CHEM','MRI-CGCM3']
 
 #models_list = ['bcc-csm1-1-m','BNU-ESM','CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','GFDL-ESM2M','GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4']
-models_list = ['GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4','IPSL-CM5A-LR','IPSL-CM5A-MR','IPSL-CM5B-LR','MIROC5','MIROC-ESM','MIROC-ESM-CHEM','MRI-CGCM3']
+models_list = ['CSIRO-Mk3-6-0','GFDL-ESM2M','GFDL-ESM2G','HadGEM2-ES365','HadGEM2-CC365','inmcm4','IPSL-CM5A-LR','IPSL-CM5A-MR','IPSL-CM5B-LR','MIROC5','MIROC-ESM','MIROC-ESM-CHEM','MRI-CGCM3']
 
 #download_files_from_nkn(models_list)
 #hyperslab_files_to_get_desired_time_blocks(full_models_list,['historical','rcp45','rcp85'],['historical','late_century'])
 #days_above_threshold_analysis(full_models_list,['rcp45'],['paris2c'],['100','105','no_analog'])
-#calculate_annual_average_days(full_models_list,['rcp45'],['paris2c'],['no_analog','above_100','above_105'])
+
 #days_above_threshold_analysis_for_obs(['no_analog','100','105'])
-calculate_ensemble_mean(full_models_list, ['rcp45'],['paris2c'],['no_analog','above_100','above_105'])
-#days_above_threshold_analysis(models_list_2,['historical'],['historical'],['100','105'])
+calculate_ensemble_mean(full_models_list, ['rcp45'],['paris2c'],['above_90'])
+calculate_ensemble_mean(full_models_list, ['rcp45','rcp85'],['mid_century','late_century'],['above_90'])
+calculate_ensemble_mean(full_models_list,['historical'],['historical'],['above_90'])
+#days_above_threshold_analysis(full_models_list,['historical'],['historical'],['90'])
+#days_above_threshold_analysis(full_models_list,['rcp45','rcp85'],['mid_century','late_century'],['90'])
+#days_above_threshold_analysis(full_models_list,['rcp45'],['paris2c'],['90'])
 #calculate_days_anomalies(['rcp45','rcp85'],['mid_century','late_century'],['above_100','above_105'])
-#compress_data(full_models_list, 1000000000)
+#compress_data(['observations'], 1000000000)
 #calculate_annual_average_days_for_obs(['no_analog','above_100','above_105'])
 #download_tasmax_data_from_nkn(models_list)
 #calculate_individual_models_vs_ensemble_mean(full_models_list,['historical'],['historical'],['above_100','above_105','no_analog'])
+#backup_to_aws_s3(models_list)
+
+# calculate_annual_average_days(full_models_list, ['rcp45','rcp85'],['mid_century','late_century'],['above_90'])
+# calculate_annual_average_days(full_models_list,['historical'],['historical'],['above_90'])
+# calculate_annual_average_days(full_models_list,['rcp45'],['paris2c'],['above_90'])
